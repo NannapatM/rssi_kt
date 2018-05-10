@@ -47,7 +47,8 @@ import java.util.concurrent.Delayed
 
 class MainActivity : AppCompatActivity() {
 
-    private var nets: Array<Element>? = null
+    private var nets = arrayOfNulls<Element>(20)
+    //private var nets: Array<Element>
     private var wifiManager: WifiManager? = null
     private var wifiList: List<ScanResult>? = null
     //internal var dialog: Dialog
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("TAG", wifiList!!.toString())
 
         this.nets = arrayOfNulls<Element>(wifiList!!.size)
+      //  this.nets = arrayOfNulls<Element>?(9)
         for (i in wifiList!!.indices) {
             val item = wifiList!![i].toString()
             val vector_item = item.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -120,31 +122,33 @@ class MainActivity : AppCompatActivity() {
             //  Toast.makeText(MainActivity.this,"Send",Toast.LENGTH_SHORT).show();
             var c = 0
             var k: Int
-            val name = nets!![i].getTitle()
+            val name = nets[i]!!.getTitle()
             //  list.add("abc");
 
             //   Toast.makeText(getApplicationContext(), "This is my Toast message!", Toast.LENGTH_SHORT).show();
             while (c < 10) {
                 k = 0
-                while (k < wifiList!!.size && name.compareTo(nets!![k].getTitle()) != 0) {
+                while (k < wifiList!!.size && name.compareTo(nets[k]!!.getTitle()) != 0) {
                     k++
                 }
 
-                list.add(nets!![k].getLevel())
+                list.add(nets[k]!!.getLevel())
+             //   Toast.makeText(getApplicationContext(),"Loading..." + c, Toast.LENGTH_LONG).show();
                 //   String name = nets[i].getTitle();
 
-                Log.d("round", "roundc" + c + nets!![k].getTitle() + nets!![k].getLevel())
+                Log.d("round", "roundc" + c + nets[k]!!.getTitle() + nets[k]!!.getLevel())
                 c++
                 SystemClock.sleep(2000)
                 // Toast.makeText(getApplicationContext(), "This is my Toast message!", Toast.LENGTH_SHORT).show();
                 detectWiFi()
+
                 //  Toast.makeText(MainActivity.this,"Send", Toast.LENGTH_SHORT).show();
             }
             // Toast.makeText(MainActivity.this,"Send", Toast.LENGTH_SHORT).show();
 
             for (z in list.indices) {
 
-                Log.d("melist", list[z])
+                Log.d("list", list[z] +"    "+ z)
             }
          /*   val move = Intent(this@MainActivity, Main2Activity::class.java)
             move.putExtra("demo", "demo")
@@ -187,64 +191,19 @@ class MainActivity : AppCompatActivity() {
             val item = inflater.inflate(R.layout.items, null)
 
             val tvSsid = item.findViewById(R.id.tvSSID) as TextView
-            tvSsid.setText(nets!![position].getTitle())
+            tvSsid.setText(nets[position]!!.getTitle())
 
             val tvSecurity = item.findViewById(R.id.tvSecurity) as TextView
-            tvSecurity.setText(nets!![position].getSecurity())
+            tvSecurity.setText(nets[position]!!.getSecurity())
 
             val tvLevel = item.findViewById(R.id.tvLevel) as TextView
-            tvLevel.text = "Signal Level: " + nets!![position].getLevel()
-            //String level = nets[position].getLevel();
+            tvLevel.text = "Signal Level: " + nets[position]!!.getLevel()
 
-            /* try{
-                int i = Integer .parseInt(level);
-                if (i>-50){
-                    tvLevel.setText("High");
-                }else if(i<=-50 && i>=-80){
-                    tvLevel.setText("Average");
-                }else if (i<=-80){
-                    tvLevel.setText("Low");
-                }
-            } catch(NumberFormatException e){
-                Log.d("TAG","Incorrect Format Line");
-            }*/
             return item
         }
     }
 
- /*   fun showdialow(ten_Wifi: String) {
-        dialog = Dialog(this@MainActivity)
-        dialog.setTitle("Enter Wifi Password")
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.dialog_layout)
 
-        val btn_DongY = dialog.findViewById(R.id.btn_dongy) as Button
-        val btn_Huy = dialog.findViewById(R.id.btn_huy) as Button
-        val edt_Password = dialog.findViewById(R.id.edt_password) as EditText
-
-        val checkBox = dialog.findViewById(R.id.cb_show) as CheckBox
-        checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (!isChecked) {
-                edt_Password.transformationMethod = PasswordTransformationMethod.getInstance()
-            } else {
-                edt_Password.transformationMethod = HideReturnsTransformationMethod.getInstance()
-            }
-        }
-
-        btn_DongY.setOnClickListener {
-            val matkhau = edt_Password.text.toString()
-
-            if (TextUtils.isEmpty(matkhau)) {
-                edt_Password.error = "No password Yet"
-            } else {
-                //Toast.makeText(MainActivity.this, "Name of wifi: " + ten_wifi + " Password " + matkhau, Toast.LENGTH_SHORT).show();
-                //  dialog.dismiss();
-
-            }
-        }
-        btn_Huy.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-    }*/
 
     private fun connectToWifi(networkSSID: String, networkPassword: String) {
         if (!wifiManager!!.isWifiEnabled) {
@@ -279,8 +238,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        /*wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();*/
     }
 }
